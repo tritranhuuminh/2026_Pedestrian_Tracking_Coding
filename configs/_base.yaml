@@ -1,0 +1,74 @@
+# Giá trị dùng chung. Các file thí nghiệm kế thừa và ghi đè từng key.
+description: ""
+tracker: ours            # original | ours
+mot20: false
+
+# Bật/tắt thành phần (xem COMPONENTS trong main.py).
+# Mặc định = R3 đầy đủ khi bật part_appearance. Khi part_appearance=false (E0, E1, R0)
+# toàn bộ thành phần bên dưới bị bỏ qua.
+components:
+  part_appearance: false
+  # --- extractor ---
+  part_torso: true
+  part_thigh: true
+  part_shin: true
+  luminance: true          # kênh L trong histogram Lab
+  q_keypoint: true         # keypoint conf trong quality
+  q_pixels: true           # số pixel của part trong quality
+  occlusion: true          # hệ số che khuất trong quality
+  # --- tracker ---
+  ema_smoothing: true      # EMA feature theo track
+  ema_quality: true        # alpha EMA theo quality
+  ema_q_gate: true         # chặn update EMA khi quality < feat_q_min
+  match_q_gate: true       # lọc part detection theo match_q_min
+  shared_gate: true        # yêu cầu tỉ lệ part chung >= min_shared
+  appearance_gate: true    # ngưỡng appearance_thresh (chỉ fusion 'min')
+  proximity_gate: true     # mask proximity_thresh khi fuse với IoU
+  weighted_fusion: false   # lam*iou+(1-lam)*emb thay cho min(iou, emb)
+  # --- hậu xử lý ---
+  interpolate: false
+
+# BoT-SORT core.
+botsort:
+  track_high_thresh: 0.35
+  track_low_thresh: 0.15
+  new_track_thresh: 0.40
+  track_buffer: 20
+  match_thresh: 0.85
+  fuse_score: true
+  proximity_thresh: 0.6
+  appearance_thresh: 0.85
+  cmc_method: sparseOptFlow
+
+# Chỉ dùng cho tracker original
+fast_reid:
+  enabled: false
+  config: null
+  weights: null
+
+# Tham số tracker của part-appearance (BoTSORT đọc trực tiếp)
+part:
+  fusion_lambda: 0.8       # chỉ có tác dụng khi bật weighted_fusion
+  part_calib: null         # [d_same, d_diff] từ eval_discriminability
+  feat_alpha: 0.9
+  feat_q_min: 0.3
+  match_q_min: 0.3
+  min_shared: 0.3
+  kps_normalized: false    # Ultralytics trả toạ độ pixel
+
+# Tham số số học của PartAppearanceExtractor (truyền nguyên xi vào extractor).
+# Phải đủ đúng các key trong EXTRACTOR_PARAMS + debug_reid.
+extractor:
+  min_bbox_h: 40.0
+  pad_ratio: 0.05
+  min_keypoint_conf: 0.35
+  half_w_ratio: 0.06
+  limb_w_ratio: 0.30
+  min_limb_ratio: 0.08
+  torso_shrink: 0.7
+  min_part_area_ratio: 0.008
+  min_pixels: 30
+  good_pixels: 100
+  l_weight: 0.25
+  occ_power: 2.0
+  debug_reid: false        # true -> extractor lưu polygon vào .dbg

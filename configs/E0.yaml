@@ -1,0 +1,4 @@
+# configs/E0.yaml
+extends: _base.yaml
+description: Original BoT-SORT, IoU only
+tracker: original

@@ -1,0 +1,8 @@
+# configs/E1.yaml
+extends: _base.yaml
+description: Original BoT-SORT + FastReID CNN
+tracker: original
+fast_reid:
+  enabled: true
+  config: fast_reid/configs/MOT20/sbs_S50.yml
+  weights: fast_reid/weights/mot20_sbs_S50.pth
